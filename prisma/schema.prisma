@@ -1,0 +1,107 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model theater {
+  id              Int    @id
+  contact         Int
+  seatingCapacity Int
+  location        String
+  name            String
+
+  seat seats[]
+  show showtime[]
+}
+
+model movies {
+  id          Int             @id
+  imgSRc      Int
+  duration    DateTime
+  realesedate DateTime
+  director    String
+  describtion String
+  title       String
+  show        showtime[]
+  ratingmovie reviewsRating[]
+}
+
+model showtime {
+  id           Int       @id
+  movieID      Int
+  theaterID    Int
+  date         DateTime
+  availibility Int
+  bookshow     booking[]
+  movie        movies    @relation(fields: [movieID], references: [id])
+  theater      theater   @relation(fields: [theaterID], references: [id])
+}
+
+model discount {
+  id             Int      @id
+  couponcode     String
+  discountAmount Int
+  expirationDate DateTime
+  limit_usage    DateTime
+}
+
+model payment {
+  id            Int      @id
+  bookingID     Int
+  paymentDtae   DateTime
+  amount        Int
+  paymentstatus Int
+  paymentMethod String
+
+  bookingpay booking @relation(fields: [bookingID], references: [id])
+}
+
+model reviewsRating {
+  id      Int      @id
+  userID  Int
+  movieId Int
+  review  String
+  rating  Int
+  date    DateTime
+
+  user        users  @relation(fields: [userID], references: [id])
+  moviereview movies @relation(fields: [movieId], references: [id])
+}
+
+model booking {
+  id             Int       @id
+  userID         Int
+  showtimeID     Int
+  number_tickets Int
+  total_cost     Int
+  userbook       users     @relation(fields: [userID], references: [id])
+  boshow         showtime  @relation(fields: [showtimeID], references: [id])
+  payment        payment[]
+}
+
+model users {
+  id       Int    @id
+  username String
+  email    String
+  password String
+  contact  String
+
+  rating      reviewsRating[]
+  bookinguser booking[]
+}
+
+model seats {
+  id         Int     @id
+  row        Int
+  column     Int
+  its_status Boolean
+  theaterID  Int
+  theater    theater @relation(fields: [theaterID], references: [id])
+}
