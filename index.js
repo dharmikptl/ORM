@@ -26,7 +26,7 @@ app.post("/userinsert", async (req, res) => {
   }
 });
 
-app.patch("/userupdate", async (req,res) => {
+app.patch("/userupdate", async (req, res) => {
   const userupdate = await prisma.users.update({
     where: {
       id: req.body.id,
@@ -40,6 +40,20 @@ app.patch("/userupdate", async (req,res) => {
     res.send(userupdate);
   } else {
     res.send("not update");
+  }
+});
+
+app.delete("/deleteuser", async (req, res) => {
+  const deleteUser = await prisma.users.delete({
+    where: {
+      id: req.body.id,
+    },
+  });
+  if (deleteUser) {
+    res.send(deleteUser);
+    res.send("user Deleted");
+  } else {
+    res.send("Not Deleted");
   }
 });
 
